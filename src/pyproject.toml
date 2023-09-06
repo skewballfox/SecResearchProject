@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "memorysafedataaggregator"
+version = "0.1.0"
+description = "A tool for scraping, aggregating, and analyzing data for a research project assessing memory safe languages"
+authors = ["Joshua Ferguson <joshua.ferguson.273@gmail.com>"]
+license = "Apache"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+ipykernel = "^6.25.2"
+jupyter = "^1.0.0"
+numpy = "^1.25.2"
+cwe2 = "^2.0.0"
+requests = "^2.31.0"
+beautifulsoup4 = "^4.12.2"
+nvdlib = "^0.7.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
