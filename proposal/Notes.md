@@ -15,7 +15,7 @@ todo
 > 1. What is the potential for the proposed activity to:
 >
 > - Advance knowledge and understanding within its own field or across different fields (Intellectual Merit); and
->  - Benefit society or advance desired societal outcomes (Broader Impacts)?
+> - Benefit society or advance desired societal outcomes (Broader Impacts)?
 >
 #### Intellectual Merits
 >
@@ -27,8 +27,9 @@ todo
 
 - [list of activities that constitute broader impact](http://www.nsf.gov/pubs/2007/nsf07046/nsf07046.jsp)
 
-- maybe a useful tool will come out of the data aggregation/analysis phase
--
+- maybe a useful tool will come out of the data aggregation/analysis phase. 
+- might help projects prioritize areas where it's best to *bite the bullet* in the smallest scope possible.
+- hopefully will help add to the body of evidence that we really, really should move to something that isn't C/C++
 
 ## Research Plan
 
@@ -51,6 +52,7 @@ as a recap, here's the project the either suggested or used as an example:
 
 todo
 
+## Conclusion
 ## Citations
 
 todo
