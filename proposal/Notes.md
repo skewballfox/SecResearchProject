@@ -2,6 +2,8 @@
 
 - [nsf proposal guidelines](https://mitcommlab.mit.edu/broad/commkit/nsf-research-proposal/)
 
+if it's quoted, it's information they provided, otherwise it's information we're planning to include in the proposal
+
 ## Introduce Research Idea
 
 todo
