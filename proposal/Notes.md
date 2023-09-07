@@ -1,6 +1,8 @@
 ![](.assets/Pasted%20image%2020230905164411.png)
 
 - [nsf proposal guidelines](https://mitcommlab.mit.edu/broad/commkit/nsf-research-proposal/)
+- [annotated example 1](https://mitcommlab.mit.edu/broad/wp-content/uploads/sites/5/2016/09/Broad_CommKit_NSF-Research_Proposal_AAE1.pdf)
+- [annotated example 2 (provided by Dr. Mittal)](https://mitcommlab.mit.edu/broad/wp-content/uploads/sites/5/2016/09/Broad_CommKit_NSF-Research_Proposal_AAE2.pdf)
 
 if it's quoted, it's information they provided, otherwise it's information we're planning to include in the proposal
 
