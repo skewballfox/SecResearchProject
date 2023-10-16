@@ -8,8 +8,6 @@ if it's quoted, it's information they provided, otherwise it's information we're
 
 ## Introduce Research Idea
 
-todo
-
 
 
 ### Intellectual Merits and Broader Impact
@@ -24,7 +22,13 @@ todo
 #### Intellectual Merits
 >
 > The Intellectual Merit criterion encompasses the potential to advance knowledge;
->
+
+within our field, the benefit is a better understanding of the merits (or lack thereof) of some memory safe languages. 
+
+More quantitative data on memory safety issues in the wild
+
+
+
 #### Broader Impacts
 >
 > The Broader Impacts criterion encompasses the potential to benefit society and contribute to the achievement of specific, desired societal outcomes
@@ -57,9 +61,12 @@ as a recap, here's the project the either suggested or used as an example:
 todo
 
 ## Conclusion
+
 ## Citations
 
 todo
+
+How many do we need?
 ### They originally provided
 - [Software Memory Safety Cybersecurity Information Sheet](https://media.defense.gov/2022/Nov/10/2003112742/-1/-1/0/CSI_SOFTWARE_MEMORY_SAFETY.PDF)
 - [Shift to Memory-Safe Languages Gains Momentum](https://www.darkreading.com/application-security/shift-memory-safe-languages-gains-momentum)
