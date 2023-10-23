@@ -89,9 +89,9 @@ def get_mem_safe_cwes(data_path: Path = data_dir, overwrite: bool = False) -> Li
     overwrite : bool
         Whether to overwrite the existing data file, by default False
     """
-    cwes: List[CWE] = []
+    # cwes: List[CWE] = []
     if not overwrite and (data_path / "cwes.json").exists():
-        from_json(cwes, (data_path / "cwes.json").read_bytes())
+        return from_json(List[CWE], (data_path / "cwes.json").read_text())
 
     cwe_1399 = BeautifulSoup(
         requests.get("https://cwe.mitre.org/data/definitions/1399.html").text,
