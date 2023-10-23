@@ -15,6 +15,10 @@ cwe2 = "^2.0.0"
 requests = "^2.31.0"
 beautifulsoup4 = "^4.12.2"
 nvdlib = "^0.7.4"
+html5lib = "^1.1"
+pyexploitdb = "^0.2.9"
+pyserde = "^0.12.3"
+orjson = "^3.9.9"
 
 
 [build-system]
