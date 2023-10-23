@@ -89,7 +89,7 @@ def get_mem_safe_cwes(data_path: Path = data_dir, overwrite: bool = False) -> Li
     overwrite : bool
         Whether to overwrite the existing data file, by default False
     """
-    # cwes: List[CWE] = []
+    cwes: List[CWE] = []
     if not overwrite and (data_path / "cwes.json").exists():
         return from_json(List[CWE], (data_path / "cwes.json").read_text())
 
