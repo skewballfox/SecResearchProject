@@ -56,10 +56,12 @@ class CWE:
     id: int
     weakness_type: wtype
     name: str
-    associated_cves: List[CVD] = field(init=False)
+    associated_cves: List[CVD] = field(default_factory=list)
 
     def __post_init__(self):
-        self.associated_cwes = []
+        if self.associated_cves:
+            return
+        self.associated_cves = []
         cwe_page = BeautifulSoup(
             requests.get(f"{cwe_base_url}{self.id}.html").text, "html5lib"
         )
