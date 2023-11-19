@@ -10,6 +10,7 @@ from enum import Enum
 from serde import serde
 from serde.json import to_json, from_json
 from nvdlib.classes import CVE as nvdlib_CVE
+from src.aggregator.cwe import CVEInfo
 
 data_dir = Path(__file__).parent.parent.parent / "data"
 
@@ -43,9 +44,9 @@ class Configurations:
 
 @dataclass
 class CVE:
-    id: str = ""
-    cisa_vulnerability_name: str = ""
-    url: str = ""
+    id: str 
+    cisa_vulnerability_name: str 
+    url: str 
     description: str = ""
 
     references: List[Reference] = field(default_factory=list)
@@ -57,8 +58,8 @@ class CVE:
     v31exploitability: float = 0.0
 
 
-def db_entry_to_cve(nvdlib_entry: Dict[Any, Any]) -> CVE:
-    cve = CVE()
+def db_entry_to_cve(cve_info:CVEInfo, nvdlib_entry: Dict[Any, Any]) -> CVE:
+    cve = CVE(id=cve_info.id, cisa_vulnerability_name=cve_info.description, url=cve_info.url)
 
     for k, v in nvdlib_entry.items():
         match k:
@@ -66,8 +67,7 @@ def db_entry_to_cve(nvdlib_entry: Dict[Any, Any]) -> CVE:
                 print(v)
                 for desc_entry in v:
                     if desc_entry.lang == "en":
-                        print(desc_entry.value)
-                cve.description = v
+                        cve.description = str(desc_entry.value)
             case "configurations":
                 for conf in v:
                     config = Configurations()
@@ -114,7 +114,7 @@ def db_entry_to_cve(nvdlib_entry: Dict[Any, Any]) -> CVE:
                 for ref in v:
                     cve.references.append(
                         Reference(
-                            ref.url,
+                            str(ref.url),
                             [str(tag) for tag in ref.tags]
                             if hasattr(ref, "tags")
                             else [],
@@ -125,7 +125,7 @@ def db_entry_to_cve(nvdlib_entry: Dict[Any, Any]) -> CVE:
     return cve
 
 
-def get_cve_data(cve_id: str, data_path: Path = data_dir) -> CVE:
+def get_cve_data(cve_info: CVEInfo, data_path: Path = data_dir) -> CVE:
     """
     Returns a CVE object for the given CVE ID.
     Parameters
@@ -135,12 +135,14 @@ def get_cve_data(cve_id: str, data_path: Path = data_dir) -> CVE:
     data_path : Path
         The path to the data directory, by default it is {project_root}/data
     """
-    if (data_path / f"{cve_id}.json").exists():
-        with open(data_path / f"{cve_id}.json", "r") as f:
-            return from_json(CVE, json.load(f))
+    cve_file = data_path / f"{cve_info.id}.json"
+    if (cve_file).exists():
+        return from_json(CVE, cve_file.read_text())
     else:
-        cve_data = nvdlib.searchCVE(cveId=cve_id)
-        cve = db_entry_to_cve(cve_data.__dict__)
-        with open(data_path / f"{cve_id}.json", "w") as f:
-            json.dump(to_json(cve), f)
+        cve_data = nvdlib.searchCVE(cveId=cve_info.id)
+        cve = db_entry_to_cve(cve_info,cve_data[0].__dict__)
+        data_path.mkdir(parents=True, exist_ok=True)
+        cve_file.write_text(
+            to_json(cve)
+        )
         return cve
