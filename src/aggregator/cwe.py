@@ -11,6 +11,7 @@ from enum import Enum
 from serde import serde
 from serde.json import to_json, from_json
 
+
 cwe_base_url = "https://cwe.mitre.org/data/definitions/"
 
 data_dir = Path(__file__).parent.parent.parent / "data"
@@ -43,109 +44,12 @@ class wtype(str, Enum):
     structure."""
 
 
+@serde
 @dataclass
-class Reference:
-    url: str
-    tags: List[str]
-
-
-@dataclass
-class CPEmatch:
-    vulnerable: bool
-    criteria: str
-    versionStartIncluding: Optional[str]
-    versionEndExcluding: Optional[str]
-    matchCriteriaId: str
-
-
-@dataclass
-class ConfNode:
-    operator: str
-    negate: bool
-    cpeMatch: List[CPEmatch] = field(default_factory=list)
-
-
-@dataclass
-class Configurations:
-    nodes: List[ConfNode] = field(default_factory=list)
-
-
-@dataclass
-class CVD:
+class CVEInfo:
     id: str
-    cisa_vulnerability_name: str
+    description: str
     url: str
-    description: str = ""
-    references: List[Reference] = field(default_factory=list)
-    configurations: List[Configurations] = field(default_factory=list)
-    v31vector: str = ""
-    v31score: float = 0.0
-    v31severity: str = ""
-    v31impactScore: float = 0.0
-    v31exploitability: float = 0.0
-
-    def __post_init__(self):
-        tmp = dict(nvdlib.searchCVE(cveId=self.id)[0].__dict__)
-        for k, v in tmp.items():
-            match k:
-                case "descriptions":
-                    print(v)
-                    for desc_entry in v:
-                        if desc_entry.lang == "en":
-                            print(desc_entry.value)
-                    self.description = v
-                case "configurations":
-                    for conf in v:
-                        config = Configurations()
-                        for node in conf.nodes:
-                            if len(node.__dict__.keys()) > 3:
-                                print("Warning: unhandled keys")
-                                print(conf.__dict__.keys())
-                            tmp = ConfNode(node.operator, node.negate)
-
-                            for x in node.cpeMatch:
-                                if len(x.__dict__.keys()) > 5:
-                                    print("Warning: unhandled keys")
-                                    print(x.__dict__.keys())
-                                if len(x.__dict__.keys()) < 5:
-                                    print("Warning: missing keys")
-                                    print(x.__dict__.keys())
-                                tmp.cpeMatch.append(
-                                    CPEmatch(
-                                        x.vulnerable,
-                                        x.criteria,
-                                        x.versionStartIncluding
-                                        if hasattr(x, "versionStartIncluding")
-                                        else None,
-                                        x.versionEndExcluding
-                                        if hasattr(x, "versionEndExcluding")
-                                        else None,
-                                        x.matchCriteriaId,
-                                    )
-                                )
-                            config.nodes.append(tmp)
-                        self.configurations.append(config)
-                case "v31vector":
-                    self.v31vector = v
-                case "v31score":
-                    self.v31score = v
-
-                case "v31severity":
-                    self.v31severity = v
-                case "v31impactScore":
-                    self.v31impactScore = v
-                case "v31exploitability":
-                    self.v31exploitability = v
-                case "references":
-                    for ref in v:
-                        self.references.append(
-                            Reference(
-                                ref.url,
-                                [str(tag) for tag in ref.tags]
-                                if hasattr(ref, "tags")
-                                else [],
-                            )
-                        )
 
 
 @serde
@@ -154,7 +58,7 @@ class CWE:
     id: int
     weakness_type: wtype
     name: str
-    associated_cves: List[CVD] = field(default_factory=list)
+    associated_cves: List[CVEInfo] = field(default_factory=list)
 
     def __post_init__(self):
         if self.associated_cves:
@@ -170,13 +74,20 @@ class CWE:
                 (name_col, description_col) = row.findAll(name="td")
                 if name_col and description_col:
                     cves.append(
-                        CVD(
+                        CVEInfo(
                             id=name_col.text,
-                            cisa_vulnerability_name=description_col.text,
+                            description=description_col.text,
                             url=f"https://nvd.nist.gov/vuln/detail/{name_col.text}",
                         )
                     )
         self.associated_cves = cves
+
+    def get_cve_data(self):
+        for cve in self.associated_cves:
+            if (data_dir / f"{cve.id}.json").exists():
+                continue
+            else:
+                cve_data = nvdlib.searchCVE(cve.id)
 
 
 def get_mem_safe_cwes(data_path: Path = data_dir, overwrite: bool = False) -> List[CWE]:
@@ -190,7 +101,7 @@ def get_mem_safe_cwes(data_path: Path = data_dir, overwrite: bool = False) -> Li
         Whether to overwrite the existing data file, by default False
     """
     cwes: List[CWE] = []
-    if not overwrite and (data_path / "cwes2.json").exists():
+    if not overwrite and (data_path / "cwes.json").exists():
         return from_json(List[CWE], (data_path / "cwes.json").read_text())
 
     cwe_1399 = BeautifulSoup(
@@ -213,7 +124,7 @@ def get_mem_safe_cwes(data_path: Path = data_dir, overwrite: bool = False) -> Li
             )
         )
     data_path.mkdir(parents=True, exist_ok=True)
-    (data_dir / "cwes2.json").write_text(to_json(cwes, data_path / "cwes.json"))
+    (data_dir / "cwes.json").write_text(to_json(cwes, data_path / "cwes.json"))
     return cwes
 
 
