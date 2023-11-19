@@ -11,6 +11,7 @@ from enum import Enum
 from serde import serde
 from serde.json import to_json, from_json
 
+
 cwe_base_url = "https://cwe.mitre.org/data/definitions/"
 
 data_dir = Path(__file__).parent.parent.parent / "data"
@@ -43,9 +44,10 @@ class wtype(str, Enum):
     structure."""
 
 
+@serde
 @dataclass
-class CVD:
-    name: str
+class CVEInfo:
+    id: str
     description: str
     url: str
 
@@ -56,7 +58,7 @@ class CWE:
     id: int
     weakness_type: wtype
     name: str
-    associated_cves: List[CVD] = field(default_factory=list)
+    associated_cves: List[CVEInfo] = field(default_factory=list)
 
     def __post_init__(self):
         if self.associated_cves:
@@ -72,13 +74,20 @@ class CWE:
                 (name_col, description_col) = row.findAll(name="td")
                 if name_col and description_col:
                     cves.append(
-                        CVD(
-                            name=name_col.text,
+                        CVEInfo(
+                            id=name_col.text,
                             description=description_col.text,
-                            url=name_col.find(name="a").attrs["href"],
+                            url=f"https://nvd.nist.gov/vuln/detail/{name_col.text}",
                         )
                     )
         self.associated_cves = cves
+
+    def get_cve_data(self):
+        for cve in self.associated_cves:
+            if (data_dir / f"{cve.id}.json").exists():
+                continue
+            else:
+                cve_data = nvdlib.searchCVE(cve.id)
 
 
 def get_mem_safe_cwes(data_path: Path = data_dir, overwrite: bool = False) -> List[CWE]:
