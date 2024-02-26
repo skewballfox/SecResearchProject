@@ -18,7 +18,7 @@ nvdlib = "^0.7.4"
 html5lib = "^1.1"
 pyexploitdb = "^0.2.9"
 pyserde = "^0.12.3"
-orjson = "^3.9.9"
+orjson = "^3.9.15"
 pandas = "^2.1.3"
 
 
